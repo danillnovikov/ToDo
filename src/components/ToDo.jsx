@@ -2,39 +2,55 @@ import { setText } from '../redux/actions/textAction';
 import { setTask, changeStatus } from '../redux/actions/tasksAction';
 import { deleteTodo } from '../redux/actions/tasksAction';
 import { useDispatch, useSelector } from 'react-redux';
-// import { useState } from 'react';
+import { useState } from 'react';
 
 const ToDo = () => {
   const dispatch = useDispatch();
   const text = useSelector((store) => store.text);
   const todos = useSelector((store) => store.todos);
-  // const [edit, setEdit] = useState(text);
+
+  const [edit, setEdit] = useState(null);
+
+  console.log(todos);
 
   const addTodo = () => {
+    if (text.trim() < 1 || text.trim() === ' ') {
+      return;
+    }
     dispatch(setText(''));
     dispatch(setTask(text));
   };
 
-  // const className = 'task';
-  const onEditTask = (text) => {
-    const newTaskText = window.prompt('Текст задачи', text);
-    if (!newTaskText) {
-      return;
-    }
-    // setEdit(newTaskText);
+  // useEffect(() => {
+  //   setText(JSON.parse(window.localStorage.getItem('text')));
+  // }, []);
 
-    // const newList = lists.map((list) => {
-    //   if (list.id === listId) {
-    //     list.tasks = list.tasks.map((task) => {
-    //       if (task.id === taskObj.id) {
-    //         task.text = newTaskText;
-    //       }
-    //       return task;
-    //     });
-    //   }
-    //   return list;
-    // });
+  // useEffect(() => {
+  //   window.localStorage.setItem('count', text);
+  //   console.log(text);
+  // }, [text]);
+
+  const onEditTask = (id, text) => {
+    setEdit(id);
+    // console.log(todos);
+    // const newTaskText = window.prompt('Текст задачи', todos);
+    // if (!newTaskText) {
+    //   return;
+    // }
+    // dispatch(setText(text));
+    // setEdit('');
   };
+
+  // const saveTodo = (id) => {
+  //   let newTodo = [...todos].map((item) => {
+  //     if (item.id === id) {
+  //       item.text = text;
+  //     }
+  //     return item;
+  //   });
+  //   dispatch(setTask(newTodo));
+  //   setEdit(null);
+  // };
 
   return (
     <div>
@@ -49,16 +65,47 @@ const ToDo = () => {
 
       {todos.map((item) => (
         <p key={item.id} className="task">
-          <span>
-            <input
-              type="checkbox"
-              onChange={() => dispatch(changeStatus(item.id))}
-            />
-            <span className="text-todo"> {item.text}</span>
-          </span>
+          {edit === item.id ? (
+            <span>
+              <input
+                type="checkbox"
+                onChange={() => dispatch(changeStatus(item.id))}
+              />
+              <input
+                style={{
+                  width: '230px',
+                  height: '25px',
+                  fontSize: '18px',
+                  borderRadius: '4px',
+                }}
+                value={item.text}
+                onChange={(e) => dispatch(setText(item.text))}
+              />
+              <button
+                style={{
+                  marginLeft: '10px',
+                  width: '60px',
+                  height: '25px',
+                  fontSize: '18px',
+                  borderRadius: '4px',
+                }}
+                // onClick={() => saveTodo(item.id)}
+              >
+                Save
+              </button>
+            </span>
+          ) : (
+            <span>
+              <input
+                type="checkbox"
+                onChange={() => dispatch(changeStatus(item.id))}
+              />
+              <span className="text-todo"> {item.text}</span>
+            </span>
+          )}
 
           <span>
-            <span onClick={() => onEditTask()}>
+            <span onClick={() => onEditTask(item.id, item.text)}>
               <svg
                 width="20"
                 height="20"

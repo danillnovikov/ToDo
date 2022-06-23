@@ -179,3 +179,7 @@ input[type='checkbox'] {
 .edit {
   margin-top: 8px;
 }
+
+.task-edit {
+  width: 70%;
+}
